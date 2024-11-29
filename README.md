@@ -1,2 +1,2 @@
 # YOLO_utils
-A repository consisting of scripts to help developing of YOLO object detection models
+A repository consisting of scripts to help development of YOLO object detection models
