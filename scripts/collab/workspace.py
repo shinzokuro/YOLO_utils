@@ -6,10 +6,12 @@ import logging
 import zipfile
 from pathlib import Path
 
+class ExpirementTracker:
 
-class CollabWorkspaceManager:
+    def __init__(self, expirement_priority_text_file: str):
+        self.priority_text_path = Path(expirement_priority_text_file)
 
-    def _get_expirement_to_run(self):
+    def get_expirement_to_run(self):
         """
         returns the current expirement, or None if no expirement is available
         """
@@ -19,11 +21,19 @@ class CollabWorkspaceManager:
         if len(self.priority_lst) == 0:
             return
         self.current_experiment = priority_str[0]
+
+    def _mark_expirement_as_completed(self):
+        self.priority_lst.remove(self.current_experiment)
+        with open(self.priority_text_path, "w") as f:
+            for line in self.priority_lst:
+                f.write(line + "\n")
+
+class CollabWorkspaceManager:
     def __init__(
-        self, expirement_priority_text_file: str, working_directory: str = "/content"
+        self, current_experiment: str, working_directory: str = "/content"
     ):
-        self.priority_text_path = Path(expirement_priority_text_file)
-        self._get_expirement_to_run()
+       
+        self.current_experiment: str = current_experiment
         self.working_directory: Path = Path(working_directory) / self.current_experiment
         self.dataset: Path = self.working_directory / "dataset"
         self.model: Path = self.working_directory / "model"
@@ -50,14 +60,7 @@ class CollabWorkspaceManager:
 
     def save_results(self, dest_path):
         # remove experiment from priority list
-        self._mark_expirement_as_completed()
         # save model
         zip_directory(self.model, dest_path, rf"{self.current_experiment}_model")
         # save results
         zip_directory(self.results, dest_path, rf"{self.current_experiment}_results")
-
-    def _mark_expirement_as_completed(self):
-        self.priority_lst.remove(self.current_experiment)
-        with open(self.priority_text_path, "w") as f:
-            for line in self.priority_lst:
-                f.write(line + "\n")
