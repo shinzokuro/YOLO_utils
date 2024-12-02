@@ -31,16 +31,12 @@ def create_val_config(weights_path, data_path, project_path, name):
     return opt
 
 
-def create_train_config(
-    train_yaml,
-    dataset_dir,
-    model_dir,
-):
+def create_train_config(train_yaml, dataset_dir, model_dir, experiment_name):
     opt = argparse.Namespace(
         weights=train_yaml["weights"],
         cfg=train_yaml["cfg"],
-        data=Path(dataset_dir / train_yaml["data"]),
-        hyp=Path(dataset_dir / train_yaml["hyp"]),
+        data=Path(dataset_dir / experiment_name / train_yaml["data"]),
+        hyp=Path(dataset_dir / experiment_name / train_yaml["hyp"]),
         epochs=train_yaml["epochs"],
         batch_size=train_yaml["batch_size"],
         imgsz=train_yaml["imgsz"],
@@ -63,7 +59,7 @@ def create_train_config(
         sync_bn=train_yaml["sync_bn"],
         workers=train_yaml["workers"],
         project=Path(model_dir / train_yaml["project"]),
-        name=train_yaml["name"],
+        name=experiment_name,
         exist_ok=train_yaml["exist_ok"],
         quad=train_yaml["quad"],
         cos_lr=train_yaml["cos_lr"],
