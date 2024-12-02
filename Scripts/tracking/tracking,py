@@ -1,0 +1,25 @@
+from pathlib import Path
+
+
+class ExpirementTracker:
+    """Manages the expirements to run, currently only supports managing the current expirement to run"""
+
+    def __init__(self, expirement_priority_text_file):
+        self.priority_text_path = Path(expirement_priority_text_file)
+
+    def get_expirement_to_run(self):
+        """
+        returns the current expirement, or None if no expirement is available
+        """
+        with open(self.priority_text_path, "r") as f:
+            priority_str = f.readlines()
+        self.priority_lst = [line.strip() for line in priority_str ]
+        if len(self.priority_lst) == 0:
+            return 
+        self.current_experiment = priority_str[0]
+        return self.current_experiment
+    def mark_expirement_as_completed(self):
+        self.priority_lst.remove(self.current_experiment)
+        with open(self.priority_text_path, "w") as f:
+            for line in self.priority_lst:
+                f.write(line + "\n")

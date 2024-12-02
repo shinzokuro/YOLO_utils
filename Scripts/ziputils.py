@@ -5,6 +5,16 @@ from tqdm import tqdm
 from pathlib import Path
 
 
+def get_zip_path(path):
+    """Find the zip file in the folder"""
+    zip_files = list(path.glob("*.zip"))
+    if len(zip_files) == 0:
+        raise FileNotFoundError("No zip file found in the datasets folder.")
+    elif len(zip_files) > 1:
+        raise ValueError("Multiple zip files found in the datasets folder.")
+    return zip_files[0]  # Return the only zip file
+
+
 def unzip_file(zip_file, dst_dir):
     if zipfile.is_zipfile(zip_file):
         # Create a directory for the extracted files

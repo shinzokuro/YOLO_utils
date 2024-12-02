@@ -1,36 +1,23 @@
 from pathlib import Path
-from ziputils import unzip_file
+from YOLO_utils.Scripts.ziputils import unzip_file
+from abc import ABC, abstractmethod
 
-
-class DriveIO:
+class DriveIOZip:
     """Manage the uploading and dowloading to and from a drive folder.
     currently only supports unzipping the dataset from drive and uploading any data"""
-
-    def __init__(self, base_dir):
-        self.base_dir = base_dir
-        self.dataset_zip_file = self._get_zip_path(base_dir)
-
-    def _get_zip_path(self):
-        """Find the zip file in the datasets folder."""
-        zip_files = list(self.datasets.glob("*.zip"))
-        if len(zip_files) == 0:
-            raise FileNotFoundError("No zip file found in the datasets folder.")
-        elif len(zip_files) > 1:
-            raise ValueError("Multiple zip files found in the datasets folder.")
-        return zip_files[0]  # Return the only zip file
-
-    def upload_data():
+    def upload_data(self, input_dir, dest_dir):
+        """Zips and uploads the input folder """
         pass
-
-    def download_dataset(self, dest_dir):
-        unzip_file(self._get_zip_path, Path(dest_dir))
+    def download_data(self, input_dir, dest_dir):
+        """unzips and download the input folder"""
         pass
+    
+
 
 class CollabWorkspaceManager:
 
     def __init__(
         self,
-        drive_workspace: DriveIO,
         working_directory="/content/workspace",
     ):
         self.working_directory = Path(working_directory)
@@ -54,6 +41,6 @@ class CollabWorkspaceManager:
 
 
 def main():
-    drive_workspace = DriveIO()
+    # driveIo = DriveIO()
     workspace_manager = CollabWorkspaceManager()
     workspace_manager.setup()
