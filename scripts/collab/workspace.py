@@ -1,5 +1,5 @@
 from pathlib import Path
-from pppp.ziputils import unzip_file, get_zip_path, zip_directory
+from scripts.ziputils import unzip_file, get_zip_path, zip_directory
 from abc import ABC, abstractmethod
 from typing import Optional
 import logging
