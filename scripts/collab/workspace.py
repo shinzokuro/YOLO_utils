@@ -21,7 +21,7 @@ class ExpirementTracker:
         if len(self.priority_lst) == 0:
             return
         self.current_experiment = priority_str[0]
-
+        return self.current_experiment
     def _mark_expirement_as_completed(self):
         self.priority_lst.remove(self.current_experiment)
         with open(self.priority_text_path, "w") as f:

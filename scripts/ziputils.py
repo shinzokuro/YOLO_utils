@@ -20,7 +20,7 @@ def unzip_file(zip_file, dst_dir):
     dst_dir = Path(dst_dir)
     if zipfile.is_zipfile(zip_file):
         # Create a directory for the extracted files
-        extract_dir = dst_dir/ zip_file.stem
+        extract_dir = dst_dir
         os.makedirs(extract_dir, exist_ok=True)
         # Extract the ZIP file
         with zipfile.ZipFile(zip_file) as zf:
@@ -57,9 +57,10 @@ def unzip_all_files(src_dir: Path, dst_dir: Path):
         # Check if the file is a ZIP file
         unzip_file(zip_file, dst_dir)
 
+
 def zip_directory(source_dir, dest, zip_file_name):
     # Get all files in the directory, including subdirectories
-    dest_zip = Path(dest) / fr"{zip_file_name}.zip"
+    dest_zip = Path(dest) / rf"{zip_file_name}.zip"
     file_paths = []
     for dirpath, _, filenames in os.walk(source_dir):
         for filename in filenames:
