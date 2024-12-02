@@ -13,7 +13,7 @@ class CollabWorkspaceManager:
         self, expirement_priority_text_file: str, working_directory: str = "/content"
     ):
         self.priority_text_path = Path(expirement_priority_text_file)
-        self.get_expirement_to_run()
+        self._get_expirement_to_run()
         self.experiment_name = self.experiment_name
         self.working_directory: Path = Path(working_directory) / self.experiment_name
         self.dataset: Path = self.working_directory / "dataset"
@@ -55,9 +55,9 @@ class CollabWorkspaceManager:
         # remove experiment from priority list
         self._mark_expirement_as_completed()
         # save model
-        zip_directory(self.model, dest_path , fr"{self.experiment_name}_model" )
+        zip_directory(self.model, dest_path, rf"{self.experiment_name}_model")
         # save results
-        zip_directory(self.results, dest_path , rf"{self.experiment_name}_results")
+        zip_directory(self.results, dest_path, rf"{self.experiment_name}_results")
 
     def _mark_expirement_as_completed(self):
         self.priority_lst.remove(self.current_experiment)
