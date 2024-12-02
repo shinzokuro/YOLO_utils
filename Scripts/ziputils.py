@@ -55,13 +55,23 @@ def unzip_all_files(src_dir: Path, dst_dir: Path):
         # Check if the file is a ZIP file
         unzip_file(zip_file, dst_dir)
 
+def zip_directory(source_dir, dest, zip_file_name):
+    # Get all files in the directory, including subdirectories
+    dest_zip = Path(dest) / fr"{zip_file_name}.zip"
+    file_paths = []
+    for dirpath, _, filenames in os.walk(source_dir):
+        for filename in filenames:
+            file_paths.append(os.path.join(dirpath, filename))
 
-def zip_directory(directory_path):
-    # Ensure the directory exists
-    if not os.path.isdir(directory_path):
-        print(f"The directory {directory_path} does not exist.")
-        return
-    zip_file_path = directory_path
-    # Create a zip file from the directory
-    shutil.make_archive(zip_file_path, "zip", directory_path)
-    print(f"Directory {directory_path} has been zipped into {zip_file_path}.zip")
+    # Create a zip file with progress bar
+    with zipfile.ZipFile(dest_zip, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for file in tqdm(file_paths, desc="Zipping files", unit="file"):
+            zipf.write(file, os.path.relpath(file, source_dir))
+
+    logging(f"Directory {source_dir} has been zipped to {dest_zip}")
+
+
+# Example usage:
+# source_directory = "/path/to/your/directory"  # Replace with your directory path
+# output_zip = "output.zip"  # Output zip file name
+# zip_directory_with_progress(source_directory, output_zip)

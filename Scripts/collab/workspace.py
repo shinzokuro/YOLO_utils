@@ -1,46 +1,66 @@
 from pathlib import Path
-from YOLO_utils.Scripts.ziputils import unzip_file
+from YOLO_utils.scripts.ziputils import unzip_file, get_zip_path, zip_directory
 from abc import ABC, abstractmethod
-
-class DriveIOZip:
-    """Manage the uploading and dowloading to and from a drive folder.
-    currently only supports unzipping the dataset from drive and uploading any data"""
-    def upload_data(self, input_dir, dest_dir):
-        """Zips and uploads the input folder """
-        pass
-    def download_data(self, input_dir, dest_dir):
-        """unzips and download the input folder"""
-        pass
-    
+from typing import Optional
+import logging
+import zipfile
+from pathlib import Path
 
 
 class CollabWorkspaceManager:
 
     def __init__(
-        self,
-        working_directory="/content/workspace",
+        self, expirement_priority_text_file: str, working_directory: str = "/content"
     ):
-        self.working_directory = Path(working_directory)
-        self.dataset = self.base_dir / "dataset"
-        self.model = self.base_dir / "model"
-        self.test_data = self.base_dir / "test_data"
-        self.results = self.base_dir / "results"
-        # Store all directories in a dictionary for easier management
-        self.structure = {
-            "datasets": self.datasets,
-            "models": self.models,
+        self.priority_text_path = Path(expirement_priority_text_file)
+        self.get_expirement_to_run()
+        self.experiment_name = self.experiment_name
+        self.working_directory: Path = Path(working_directory) / self.experiment_name
+        self.dataset: Path = self.working_directory / "dataset"
+        self.model: Path = self.working_directory / "model"
+        self.test_data: Path = self.working_directory / "test_data"
+        self.results: Path = self.working_directory / "results"
+        self.structure: dict[str, Path] = {
+            "datasets": self.dataset,
+            "models": self.model,
             "test_data": self.test_data,
             "results": self.results,
         }
 
-    def setup(self):
-        """Create the workspace directories if they don't exist."""
+    def _get_expirement_to_run(self):
+        """
+        returns the current expirement, or None if no expirement is available
+        """
+        with open(self.priority_text_path, "r") as f:
+            priority_str = f.readlines()
+        self.priority_lst = [line.strip() for line in priority_str]
+        if len(self.priority_lst) == 0:
+            return
+        self.current_experiment = priority_str[0]
+        return self.current_experiment
+
+    def setup(self, dataset_zip, test_data_zip):
+        """Create workspace directories and optionally extract ZIPs."""
         for name, path in self.structure.items():
             path.mkdir(parents=True, exist_ok=True)
-            print(f"Created or verified folder: {path}")
+            logging.info(f"Created or verified folder: {path}")
 
+        if dataset_zip:
+            unzip_file(dataset_zip, self.dataset)
 
-def main():
-    # driveIo = DriveIO()
-    workspace_manager = CollabWorkspaceManager()
-    workspace_manager.setup()
+        if test_data_zip:
+            unzip_file(test_data_zip, self.test_data)
+
+    def save_results(self, dest_path):
+        # remove experiment from priority list
+        self._mark_expirement_as_completed()
+        # save model
+        zip_directory(self.model, dest_path , fr"{self.experiment_name}_model" )
+        # save results
+        zip_directory(self.results, dest_path , rf"{self.experiment_name}_results")
+
+    def _mark_expirement_as_completed(self):
+        self.priority_lst.remove(self.current_experiment)
+        with open(self.priority_text_path, "w") as f:
+            for line in self.priority_lst:
+                f.write(line + "\n")
