@@ -3,6 +3,7 @@ import shutil
 import zipfile
 from tqdm import tqdm
 from pathlib import Path
+import logging
 
 
 def get_zip_path(path):
@@ -29,6 +30,7 @@ def unzip_file(zip_file, dst_dir):
                     zf.extract(member, extract_dir)
                 except zipfile.error as e:
                     print(f"Error extracting {member.filename}: {e}")
+        logging.info(f"{zip_file} saved to {dst_dir}")
     else:
         print(f"{zip_file} is not a valid ZIP file.")
         return
@@ -70,11 +72,4 @@ def zip_directory(source_dir, dest, zip_file_name):
     with zipfile.ZipFile(dest_zip, "w", zipfile.ZIP_DEFLATED) as zipf:
         for file in tqdm(file_paths, desc="Zipping files", unit="file"):
             zipf.write(file, os.path.relpath(file, source_dir))
-
-    logging(f"Directory {source_dir} has been zipped to {dest_zip}")
-
-
-# Example usage:
-# source_directory = "/path/to/your/directory"  # Replace with your directory path
-# output_zip = "output.zip"  # Output zip file name
-# zip_directory_with_progress(source_directory, output_zip)
+    logging.info(f"{zip_file_name} saved to {dest}")

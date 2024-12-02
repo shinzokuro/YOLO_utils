@@ -6,12 +6,12 @@ import logging
 import zipfile
 from pathlib import Path
 
-class ExpirementTracker:
+class ExperimentTracker:
 
     def __init__(self, expirement_priority_text_file: str):
         self.priority_text_path = Path(expirement_priority_text_file)
 
-    def get_expirement_to_run(self):
+    def get_experiment_to_run(self):
         """
         returns the current expirement, or None if no expirement is available
         """
@@ -28,11 +28,11 @@ class ExpirementTracker:
             for line in self.priority_lst:
                 f.write(line + "\n")
 
+
 class CollabWorkspaceManager:
     def __init__(
         self, current_experiment: str, working_directory: str = "/content"
     ):
-       
         self.current_experiment: str = current_experiment
         self.working_directory: Path = Path(working_directory) / self.current_experiment
         self.dataset: Path = self.working_directory / "dataset"
@@ -59,7 +59,6 @@ class CollabWorkspaceManager:
             unzip_file(test_data_zip, self.test_data)
 
     def save_results(self, dest_path):
-        # remove experiment from priority list
         # save model
         zip_directory(self.model, dest_path, rf"{self.current_experiment}_model")
         # save results
