@@ -7,15 +7,16 @@ def write_yaml(data, file_path):
         yaml.safe_dump(data, file, default_flow_style=False, sort_keys=False)
 
 
-def create_dataset_yamlfile(path, classes={0: "person"}):
+def create_dataset_yamlfile(dataset_path, classes={0: "person"}, file_name=r"data"):
     data = {
-        "path": rf"{path}",
+        "path": rf"{dataset_path}",
         "train": "images/train",  # train images (relative to 'path') 128 images
         "val": "images/val",  # val images (relative to 'path') 128 images
         "test": "images/val",  # test images (optional)
         "names": classes,
     }
-    write_yaml(data, path)
+    data_yaml_file = Path(dataset_path) / rf"{file_name}.yaml"
+    write_yaml(data, data_yaml_file)
 
 
 def read_yaml(file_path):
