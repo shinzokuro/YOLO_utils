@@ -16,9 +16,11 @@ def get_zip_path(path):
 
 
 def unzip_file(zip_file, dst_dir):
+    zip_file = Path(zip_file)
+    dst_dir = Path(dst_dir)
     if zipfile.is_zipfile(zip_file):
         # Create a directory for the extracted files
-        extract_dir = os.path.join(dst_dir, zip_file.stem)
+        extract_dir = dst_dir/ zip_file.stem
         os.makedirs(extract_dir, exist_ok=True)
         # Extract the ZIP file
         with zipfile.ZipFile(zip_file) as zf:
