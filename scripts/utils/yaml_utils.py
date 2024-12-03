@@ -16,7 +16,7 @@ def create_dataset_yamlfile(
     classes={0: "person"},
 ):
     data = {
-        "path": dataset_path,
+        "path": str(dataset_path),
         "train": train,  # train images (relative to 'path') 128 images
         "val": val,  # val images (relative to 'path') 128 images
         "test": test,  # test images (optional)
@@ -25,6 +25,7 @@ def create_dataset_yamlfile(
     data_yaml_file = Path(dataset_path) / rf"{file_name}.yaml"
     write_yaml(data, data_yaml_file)
     return data_yaml_file
+
 
 def read_yaml(file_path):
     data = None
