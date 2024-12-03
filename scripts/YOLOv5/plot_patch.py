@@ -8,11 +8,12 @@ from yolov5.utils.metrics import (
     plot_mc_curve as original_plot_mc_curve,
 )
 import logging
-logging.info("monkey patching yolov5.utils.metrics.plot_pr_curve and yolov5.utils.metrics.plot_pr_curve to save the graph data in excel ")
+
+
 # AP, PR Curve
 def save_pr_curve_data(px, py, ap, save_dir="pr_curve.png", names=()):
     """_summary_
-    saves the data in excel 
+    saves the data in excel
     """
     # Convert px, py, ap to numpy arrays if they are not already
     px = np.array(px)
@@ -78,5 +79,9 @@ def modified_plot_mc_curve(
     save_mc_curve_data(px, py, save_dir, names, xlabel, ylabel)
 
 
-metrics.plot_pr_curve = modified_plot_pr_curve
-metrics.plot_mc_curve = modified_plot_mc_curve
+def setup_patch():
+    metrics.plot_pr_curve = modified_plot_pr_curve
+    metrics.plot_mc_curve = modified_plot_mc_curve
+    logging.info(
+        "monkey patching yolov5.utils.metrics.plot_pr_curve and yolov5.utils.metrics.plot_pr_curve to save the graph data in excel "
+    )
