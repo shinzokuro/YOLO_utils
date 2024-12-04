@@ -5,7 +5,8 @@ from typing import Optional
 import logging
 import zipfile
 from pathlib import Path
-
+import os
+import shutil
 class ExperimentTracker:
 
     def __init__(self, expirement_priority_text_file: str):
@@ -63,3 +64,15 @@ class CollabWorkspaceManager:
         zip_directory(self.model, dest_path, rf"{self.current_experiment}_model")
         # save results
         zip_directory(self.results, dest_path, rf"{self.current_experiment}_results")
+    def clear_model_directory(self):
+        if os.path.exists(self.model) and os.path.isdir(self.model):
+        # List all the files and subdirectories
+            for item in os.listdir(self.model):
+                item_path = os.path.join(self.model, item)
+                # Check if it is a file or directory
+                if os.path.isfile(item_path) or os.path.islink(item_path):
+                    os.unlink(item_path)  # Remove the file or symlink
+                elif os.path.isdir(item_path):
+                    shutil.rmtree(item_path)  
+
+# Example usage
