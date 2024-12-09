@@ -1,12 +1,16 @@
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import os
-
+from yolov5 import val
+from YOLO_utils.scripts.YOLOv5.config import create_val_config
+from YOLO_utils.scripts.utils.yaml_utils import create_val_yaml
 import utils.metrics as metrics
 from utils.metrics import (
     plot_pr_curve as original_plot_pr_curve,
     plot_mc_curve as original_plot_mc_curve,
 )
+
 
 # AP, PR Curve
 def save_pr_curve_data(px, py, ap, save_dir="pr_curve.png", names=()):
@@ -79,3 +83,22 @@ def modified_plot_mc_curve(
 
 metrics.plot_pr_curve = modified_plot_pr_curve
 metrics.plot_mc_curve = modified_plot_mc_curve
+
+
+def run_validation(save_path: Path, test_data_path, pt_files: dict):
+    # metrics.plot_pr_curve = modified_plot_pr_curve
+    # metrics.plot_mc_curve = modified_plot_mc_curve
+    test_data = [
+        directory for directory in Path(test_data_path).iterdir() if directory.is_dir()
+    ]
+    for data_path in test_data:
+        data_yaml = create_val_yaml(data_path)
+        project_path = save_path / data_path.stem
+        for model_name, pt_file_path in pt_files.items():
+            opt = create_val_config(
+                weights_path=pt_file_path,
+                data_path=data_yaml,
+                project_path=project_path,
+                name=model_name,
+            )
+            val.main(opt)
