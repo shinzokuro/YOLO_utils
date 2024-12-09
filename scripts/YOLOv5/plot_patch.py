@@ -9,33 +9,29 @@ from utils.metrics import (
     plot_mc_curve as original_plot_mc_curve,
 )
 
-
-
-
 def modified_plot_pr_curve(px, py, ap, save_dir="pr_curve.png", names=()):
+    """Saves the pr_curve data n excel format and plots the corresponding data"""
     # save the results
     save_pr_curve_data(px, py, ap, save_dir, names)
     # Call the original plot_pr_curve function
     original_plot_pr_curve(px, py, ap, save_dir, names)
 
-
-# Confidence-F1 Curve, Confidence-Precision Curve, Confidence-Recall Curve
 def modified_plot_mc_curve(
     px, py, save_dir="mc_curve.png", names=(), xlabel="Confidence", ylabel="Metric"
 ):
-    # flatten the results
+    """Saves the mc_curve data in excel format and plots the corresponding data"""
+    # save the results
     save_mc_curve_data(px, py, save_dir, names, xlabel, ylabel)
     # Call the original plot_pr_curve function
     original_plot_mc_curve(px, py, save_dir, names, xlabel, ylabel)
 
-
 metrics.plot_pr_curve = modified_plot_pr_curve
 metrics.plot_mc_curve = modified_plot_mc_curve
 
-
-def run_validation(save_path: Path, test_data_path, pt_files: dict):
+def run_validation(save_path: Path, test_data_dir, pt_files: dict):
+    '''runs validation on the given test data directory and pt_file paths '''
     test_data = [
-        directory for directory in Path(test_data_path).iterdir() if directory.is_dir()
+        directory for directory in Path(test_data_dir).iterdir() if directory.is_dir()
     ]
     for data_path in test_data:
         data_yaml = create_val_yaml(data_path)

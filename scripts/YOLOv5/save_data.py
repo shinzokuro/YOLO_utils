@@ -5,7 +5,7 @@ import os
 # AP, PR Curve
 def save_pr_curve_data(px, py, ap, save_dir="pr_curve.png", names=()):
     """_summary_
-    saves the data in excel
+    saves the pr_curve data in excel
     """
     # Convert px, py, ap to numpy arrays if they are not already
     px = np.array(px)
@@ -37,7 +37,7 @@ def save_mc_curve_data(
     px, py, save_dir="mc_curve.png", names=(), xlabel="Confidence", ylabel="Metric"
 ):
     """_summary_
-    saves the data in excel
+    saves the mc_curve data in excel
     """
     px = np.array(px)
     py = np.array(py)
