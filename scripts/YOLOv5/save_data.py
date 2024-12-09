@@ -1,14 +1,6 @@
 import pandas as pd
 import numpy as np
 import os
-from yolov5 import val
-import yolov5.utils.metrics as metrics
-from yolov5.utils.metrics import (
-    plot_pr_curve as original_plot_pr_curve,
-    plot_mc_curve as original_plot_mc_curve,
-)
-import logging
-
 
 # AP, PR Curve
 def save_pr_curve_data(px, py, ap, save_dir="pr_curve.png", names=()):
@@ -60,28 +52,3 @@ def save_mc_curve_data(
     df = pd.DataFrame(data)
     # Save the recall and precision data to an Excel file
     df.to_excel(path, index=False)
-
-
-def modified_plot_pr_curve(px, py, ap, save_dir="pr_curve.png", names=()):
-    # Call the original plot_pr_curve function
-    original_plot_pr_curve(px, py, ap, save_dir, names)
-    # save the results
-    save_pr_curve_data(px, py, ap, save_dir, names)
-
-
-# Confidence-F1 Curve, Confidence-Precision Curve, Confidence-Recall Curve
-def modified_plot_mc_curve(
-    px, py, save_dir="mc_curve.png", names=(), xlabel="Confidence", ylabel="Metric"
-):
-    # Call the original plot_pr_curve function
-    original_plot_mc_curve(px, py, save_dir, names, xlabel, ylabel)
-    # flatten the results
-    save_mc_curve_data(px, py, save_dir, names, xlabel, ylabel)
-
-
-def setup_patch():
-    metrics.plot_pr_curve = modified_plot_pr_curve
-    metrics.plot_mc_curve = modified_plot_mc_curve
-    logging.info(
-        "monkey patching yolov5.utils.metrics.plot_pr_curve and yolov5.utils.metrics.plot_pr_curve to save the graph data in excel "
-    )
