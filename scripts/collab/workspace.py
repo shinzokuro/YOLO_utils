@@ -21,7 +21,7 @@ class ExperimentTracker:
         self.priority_lst = [line.strip() for line in priority_str]
         if len(self.priority_lst) == 0:
             return
-        self.current_experiment = priority_str[0]
+        self.current_experiment = self.priority_lst[0]
         return self.current_experiment
     def _mark_expirement_as_completed(self):
         self.priority_lst.remove(self.current_experiment)
